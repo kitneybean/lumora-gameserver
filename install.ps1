@@ -4,7 +4,9 @@ param(
     [Parameter(Mandatory = $true)][string]$NeoForgeVersion,
     [Parameter(Mandatory = $true)][string]$AuthUrl,
     [string]$ServerDir = "$PSScriptRoot/server",
-    [string]$Memory = "4G"
+    [string]$Memory = "4G",
+    # Set only if you have read and accept the Minecraft EULA: https://aka.ms/MinecraftEULA
+    [switch]$AcceptEula
 )
 $ErrorActionPreference = "Stop"
 New-Item -ItemType Directory -Force $ServerDir | Out-Null
@@ -36,7 +38,12 @@ try {
     if (-not (Test-Path server.properties)) {
         Copy-Item "$PSScriptRoot/config/server.properties" server.properties
     }
-    "eula=true" | Set-Content -Encoding ascii eula.txt
+    if ($AcceptEula) {
+        "eula=true" | Set-Content -Encoding ascii eula.txt
+    } elseif (-not (Test-Path eula.txt)) {
+        "eula=false" | Set-Content -Encoding ascii eula.txt
+        Write-Host "Read the Minecraft EULA (https://aka.ms/MinecraftEULA) and set eula=true in $ServerDir/eula.txt, or rerun with -AcceptEula."
+    }
     Write-Host "Done. Start the server with: $ServerDir/run.bat (or run.sh)"
 }
 finally {

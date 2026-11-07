@@ -2,6 +2,7 @@
 # Installs a NeoForge dedicated server wired to Lumora Auth via authlib-injector.
 # Usage: ./install.sh <neoforge-version> <auth-url> [server-dir] [memory]
 #   ./install.sh 21.1.77 https://auth.example.com
+# Set ACCEPT_EULA=1 only if you have read and accept the Minecraft EULA: https://aka.ms/MinecraftEULA
 set -euo pipefail
 
 NEOFORGE_VERSION="${1:?neoforge version, e.g. 21.1.77}"
@@ -32,5 +33,10 @@ cat > user_jvm_args.txt <<EOF
 EOF
 
 [ -f server.properties ] || cp "$SCRIPT_DIR/config/server.properties" server.properties
-echo "eula=true" > eula.txt
+if [ "${ACCEPT_EULA:-0}" = "1" ]; then
+  echo "eula=true" > eula.txt
+elif [ ! -f eula.txt ]; then
+  echo "eula=false" > eula.txt
+  echo "Read the Minecraft EULA (https://aka.ms/MinecraftEULA) and set eula=true in $SERVER_DIR/eula.txt, or rerun with ACCEPT_EULA=1."
+fi
 echo "Done. Start the server with: $SERVER_DIR/run.sh"
