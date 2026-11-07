@@ -41,3 +41,12 @@ ACCEPT_EULA=1 ./install.sh 21.1.77 https://auth.example.com
 
 Версию NeoForge берите ту же, что указана у сборки в админке Lumora Auth.
 Серверные моды — из той же сборки (файлы с пометкой `server`/`both`), кладутся в `server/mods/`.
+
+## На сервере (Linux)
+
+1. Java 21 (`sudo apt install openjdk-21-jre-headless`), пользователь `minecraft`, код в `/opt/lumora-gameserver`.
+2. `ACCEPT_EULA=1 ./install.sh <версия NeoForge> https://auth.example.com` — адрес сайта Lumora с HTTPS.
+3. Моды и конфиги сервера — из той же сборки в админке (файлы «Везде» и «Только сервер») в `server/mods`, `server/config`.
+4. Автозапуск: `deploy/lumora-gameserver.service` (инструкция внутри файла). Откройте порт 25565.
+
+В админке у сервера укажите его домен или IP — лаунчер добавит его в список серверов игры.

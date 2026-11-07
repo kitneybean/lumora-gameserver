@@ -1,0 +1,21 @@
+# systemd unit for a Lumora NeoForge server on Linux.
+#   sudo cp deploy/lumora-gameserver.service /etc/systemd/system/
+#   sudo systemctl daemon-reload && sudo systemctl enable --now lumora-gameserver
+# Console: sudo journalctl -u lumora-gameserver -f ; commands: use RCON or "screen" if you need them.
+[Unit]
+Description=Lumora Minecraft server (NeoForge)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=minecraft
+WorkingDirectory=/opt/lumora-gameserver/server
+ExecStart=/opt/lumora-gameserver/server/run.sh nogui
+Restart=on-failure
+RestartSec=10
+# Give the server time to save the world on stop.
+KillSignal=SIGINT
+TimeoutStopSec=90
+
+[Install]
+WantedBy=multi-user.target
