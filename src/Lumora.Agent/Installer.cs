@@ -94,8 +94,13 @@ public sealed class Installer(AgentPaths paths, SiteClient site, ILogger logger)
         var exe = OperatingSystem.IsWindows() ? "java.exe" : "java";
         if (!Directory.Exists(home))
             return "";
-        return Directory.EnumerateFiles(home, exe, SearchOption.AllDirectories)
-            .FirstOrDefault(p => Path.GetFileName(Path.GetDirectoryName(p)) == "bin") ?? "";
+        var found = Directory.EnumerateFiles(home, exe, SearchOption.AllDirectories)
+            .FirstOrDefault(p => Path.GetFileName(Path.GetDirectoryName(p)) == "bin");
+        if (found is null)
+            return "";
+        // A half-deleted runtime (disk cleanup, antivirus) cannot start: treat it as missing so it is downloaded again.
+        var root = Path.GetDirectoryName(Path.GetDirectoryName(found))!;
+        return File.Exists(Path.Combine(root, "lib", "jvm.cfg")) && File.Exists(Path.Combine(root, "lib", "modules")) ? found : "";
     }
 
     /// <summary>Eclipse Temurin JRE from api.adoptium.net, kept in &lt;data&gt;/java/&lt;major&gt;.</summary>
