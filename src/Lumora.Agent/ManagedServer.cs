@@ -94,7 +94,7 @@ public sealed class ManagedServer : IAsyncDisposable
             _diskAt = DateTimeOffset.UtcNow;
             _ = Task.Run(() => _diskMb = DirectorySizeMb(Dir));
         }
-        return new ServerStatusReportDto(Id, State, Activity, Progress, Marker?.Revision, players, _cpu, memory, _diskMb, StartedAt, LastError);
+        return new ServerStatusReportDto(Id, State, Activity, Progress, Marker?.BuildId, Marker?.Revision, players, _cpu, memory, _diskMb, StartedAt, LastError);
     }
 
     /// <summary>Console lines produced since the last call (sent to the site in batches).</summary>
