@@ -1,0 +1,41 @@
+name: Release
+
+# Push a tag like v0.1.0 to build Lumora Agent for Linux and Windows and publish a GitHub release.
+# The site's install script (/agent/install.sh) downloads lumora-agent-<rid>.tar.gz and checks checksums.txt.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      # Lumora.Contracts and Lumora.Shared live in lumora-auth, checked out side by side as in the local layout.
+      - uses: actions/checkout@v4
+        with:
+          path: lumora-gameserver
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ vars.LUMORA_AUTH_REPO || format('{0}/lumora-auth', github.repository_owner) }}
+          path: lumora-auth
+          token: ${{ secrets.LUMORA_AUTH_TOKEN || github.token }}
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Test
+        working-directory: lumora-gameserver
+        run: dotnet test -c Release
+
+      - name: Publish
+        working-directory: lumora-gameserver
+        run: bash build/publish.sh "${GITHUB_REF_NAME#v}" linux-x64 linux-arm64 win-x64
+
+      - name: Create release
+        working-directory: lumora-gameserver
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" artifacts/* --title "Lumora Agent $GITHUB_REF_NAME" --generate-notes

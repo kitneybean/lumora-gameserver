@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Lumora.Agent/Lumora.Agent.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Lumora.Agent.Tests/Lumora.Agent.Tests.csproj" />
+  </Folder>
+</Solution>

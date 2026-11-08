@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: lumora-gameserver
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ vars.LUMORA_AUTH_REPO || format('{0}/lumora-auth', github.repository_owner) }}
+          path: lumora-auth
+          token: ${{ secrets.LUMORA_AUTH_TOKEN || github.token }}
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Test
+        working-directory: lumora-gameserver
+        run: dotnet test

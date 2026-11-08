@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>lumora-agent</AssemblyName>
+    <RootNamespace>Lumora.Agent</RootNamespace>
+    <Version>0.1.0</Version>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <ServerGarbageCollection>false</ServerGarbageCollection>
+    <!--
+      Protocol contracts and shared code live in the lumora-auth repository, checked out side by side
+      (Minecraft/lumora-auth, Minecraft/lumora-gameserver); CI checks them out the same way.
+    -->
+    <LumoraAuthSrc Condition="'$(LumoraAuthSrc)' == ''">$(MSBuildThisFileDirectory)..\..\..\lumora-auth\src\</LumoraAuthSrc>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(LumoraAuthSrc)Lumora.Contracts\Lumora.Contracts.csproj" />
+    <ProjectReference Include="$(LumoraAuthSrc)Lumora.Shared\Lumora.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="10.0.14" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.14" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="10.0.14" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="10.0.14" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Lumora.Agent.Tests" />
+  </ItemGroup>
+
+</Project>

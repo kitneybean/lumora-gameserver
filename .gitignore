@@ -3,3 +3,7 @@
 *.jar
 *.log
 logs/
+bin/
+obj/
+/publish/
+/artifacts/
